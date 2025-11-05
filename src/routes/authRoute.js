@@ -77,7 +77,6 @@ authRouter.post('/login' ,  async (req, res)=>{
             throw new Error("User does not exist with " + emailId + " email");
         }
          const isPasswordValid = await bcrypt.compare(password, user.password);
-         console.log(isPasswordValid)
          if(!isPasswordValid){
             throw new Error("Invalid login credentials");
          }

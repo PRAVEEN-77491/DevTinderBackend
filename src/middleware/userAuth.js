@@ -14,7 +14,7 @@ try {
     }
 
     //verfiy token
-    const decodedData = await jwt.verify(token, "DEV@TINDER#@#$");
+    const decodedData = await jwt.verify(token, process.env.VITE_TOKEN_SECRET);
     //extract data from token
     const {_id} = decodedData;
    
