@@ -2,7 +2,8 @@ import express from 'express';
 import isValidSignup from '../utils/validation.js';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import userAuth from '../middleware/userAuth.js';
+import validateUpdateFields from '../utils/updateValidation.js';
 const authRouter= express.Router();
 
 const app = express();
@@ -59,6 +60,55 @@ authRouter.post('/signup' , async (req, res)=>{
     }catch(err){
         return res.status(500).json({
             message: "Error while signing up the user",
+            error: err.message
+        })
+    }
+})
+
+authRouter.patch('/update' ,userAuth, async(req,res)=>{
+    try{
+        const user = req.user;
+        //allowed fields to update
+        const allowedUpdates = ["firstName","lastName" ,"age", "photoUrl", "about","skills"];
+
+        //check if the fields are valid
+        const isValidField = Object.keys(req.body).every( k => allowedUpdates.includes(k));
+
+        if(!isValidField){
+            return res.status(400).json({
+                message: "Invalid updates! Allowed fields " 
+            })
+        }
+
+        //validate the fields
+        const validation = validateUpdateFields(req);
+        if(!validation){
+            return res.status(400).json({
+                message: "Invalid user data"
+            })
+        }
+
+        const updatedField = {
+            firstName : req.body.firstName,
+            lastName : req.body.lastName,
+            age : req.body.age,
+            photoUrl : req.body.photoUrl,
+            about : req.body.about,
+            skills : req.body.skills    
+        }
+
+        //update the fields
+        const updatedUser = await User.findByIdAndUpdate(user._id, updatedField);
+        console.log("updated User ", updatedUser )
+        res.json({
+            message: "User profile updated successfully",
+            data: updatedUser
+        })
+
+
+    }catch(err){
+        return res.status(500).json({
+            message: "Error while updating the profile",
             error: err.message
         })
     }

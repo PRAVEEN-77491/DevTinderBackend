@@ -4,6 +4,7 @@ import User from './models/user.js';
 import authRouter from './routes/authRoute.js';
 import profileRouter from './routes/profileRoute.js';
 import cookieParser from 'cookie-parser';
+import connectionRequestRouter from './routes/connectionRequestRoute.js';
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json()); //to parse json request body
 app.use(cookieParser())
 app.use('/', authRouter);
 app.use("/", profileRouter);
+app.use("/", connectionRequestRouter);
 
 
 app.get("/user", async (req, res) => {

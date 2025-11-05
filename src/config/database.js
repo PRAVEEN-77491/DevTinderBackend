@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-
+dotenv
 const connectDB = async()=>{
-    await mongoose.connect(
-    "mongodb+srv://NamastePraveen:RmplCt0IKTlURkV2@namstertindercluster.sgngdng.mongodb.net/devTinder"
-)
+    await mongoose.connect(process.env.MONGO_URL )
+    
 }
 
 

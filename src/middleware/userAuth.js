@@ -1,6 +1,9 @@
 
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const userAuth = async(req,res ,next)=>{
 try {
@@ -14,7 +17,7 @@ try {
     }
 
     //verfiy token
-    const decodedData = await jwt.verify(token, process.env.VITE_TOKEN_SECRET);
+    const decodedData = await jwt.verify(token, process.env.TOKEN_SECRET);
     //extract data from token
     const {_id} = decodedData;
    
