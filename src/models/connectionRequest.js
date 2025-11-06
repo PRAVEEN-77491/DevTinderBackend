@@ -3,11 +3,13 @@ import mongoose from 'mongoose';
 const ConnectionRequest =  new mongoose.Schema({
     fromUserId:{
         type: mongoose.Schema.Types.ObjectId,
-        index :true,
+        required :true,
+        ref : "User"
     },
     toUserId :{
         type: mongoose.Schema.Types.ObjectId,
-        index :true,
+        required :true,
+        ref : "User"
     },
     status:{
         type: String,
@@ -18,6 +20,8 @@ const ConnectionRequest =  new mongoose.Schema({
     }
 
 }, {timestamps: true})
+
+ConnectionRequest.index({ fromUserId: 1, toUserId: 1 }, { unique: true });
 
 const connectionRequest = mongoose.model("ConnectionRequest", ConnectionRequest);
 

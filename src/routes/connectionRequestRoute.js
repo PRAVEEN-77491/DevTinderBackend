@@ -34,7 +34,6 @@ connectionRequestRouter.post('/connection-request/:status/:toUserId', userAuth, 
 
         //check if toUserId exists
         const istoUserExists = await User.findById(toUserId);
-        console.log("istoUserExists ", istoUserExists)
         if(!istoUserExists){
             return res.status(404).json({
                 message: "User not found with id " + toUserId
@@ -76,6 +75,55 @@ connectionRequestRouter.post('/connection-request/:status/:toUserId', userAuth, 
     }catch(err){
         res.status(400).json({
             message: "Error while sending connection request",
+            error: err.message
+        })
+    }
+})
+
+connectionRequestRouter.post('/review-request/:status/:requestedId', userAuth, async (req, res)=>{
+    try{
+        const loggedInUser = req.user;
+        const {status,requestedId} = req.params;
+
+        //check if the status is valid
+        const allowedStatus = ["accepted" ,"rejected"];
+        if(!allowedStatus.includes(status)){
+            return res.status(400).json({
+                message: "Invalid status!!"
+            })
+        }
+
+        //check if requestedId is valid
+        if(!mongoose.Types.ObjectId.isValid(requestedId)){
+            return res.status(400).json({
+                message: "Invalid user id format"
+            });
+        }
+
+        //check if connection request is there
+        const ConnectionRequest = await connectionRequest.findOne({
+            _id : requestedId,
+            toUserId: loggedInUser._id,
+            status: "interested"
+        })
+        if(!ConnectionRequest){
+            return res.status(404).json({
+                message: "No connection request found to review"
+            })
+        }
+
+        ConnectionRequest.status = status;
+        const reviewData = await ConnectionRequest.save();
+
+        res.json({
+            message: "Connection request reviewed successfully",
+            data: reviewData
+        })
+
+
+    }catch(err){
+        res.status(400).json({
+            message: "Erroe while reviewing connection request",
             error: err.message
         })
     }

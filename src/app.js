@@ -5,6 +5,7 @@ import authRouter from './routes/authRoute.js';
 import profileRouter from './routes/profileRoute.js';
 import cookieParser from 'cookie-parser';
 import connectionRequestRouter from './routes/connectionRequestRoute.js';
+import userRouter from './routes/userRoute.js';
 
 
 const app = express();
@@ -18,28 +19,10 @@ app.use(cookieParser())
 app.use('/', authRouter);
 app.use("/", profileRouter);
 app.use("/", connectionRequestRouter);
+app.use("/", userRouter);
 
 
-app.get("/user", async (req, res) => {
-    const email = req.body.emailId;
-    try{
-        const user = await User.findOne({emailId : email})
-        if(!user){
-            return res.status(404).json({
-                message: "User not found"
-            })
-        }
-        return res.json({
-            message: "User fetched successfully",
-            data: user
-        })
-    }catch(err){
-        return res.status(500).json({
-            message: "Error while fetching the user",
-            error: err.message
-        })
-    }
-})
+
 
 app.get("/feed", async(req,res)=>{
 
